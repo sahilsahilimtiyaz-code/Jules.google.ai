@@ -5,6 +5,8 @@ import '../services/jules_api.dart';
 import '../services/storage.dart';
 import '../services/agent_state.dart';
 import '../services/prompt_library.dart';
+import '../src/core/tokens.dart';
+import '../src/core/validators.dart';
 import '../widgets/conical_glow.dart';
 
 class NewTaskSheet extends StatefulWidget {
@@ -53,6 +55,19 @@ class _NewTaskSheetState extends State<NewTaskSheet> {
 
   Future<void> _submit() async {
     final agent = context.read<AgentState>();
+    final key0 = await SecureStore().getApiKey();
+    if (key0 == null || !Validators.looksLikeApiKey(key0)) {
+      setState(() => _msg = 'Set a valid API key in Settings first');
+      return;
+    }
+    if (!Validators.isRepoFullName(_repo.text)) {
+      setState(() => _msg = 'Repo must be owner/name (e.g. google-labs-code/jules-action)');
+      return;
+    }
+    if (!Validators.isPromptValid(_prompt.text, max: AppConstants.maxPromptChars)) {
+      setState(() => _msg = 'Task required (max ${AppConstants.maxPromptChars} chars)');
+      return;
+    }
     setState(() { _busy = true; _msg = null; _success = false; });
     agent.setWorking(true);
     try {
