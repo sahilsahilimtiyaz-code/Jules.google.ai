@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -39,13 +38,13 @@ class _WebTabState extends State<WebTab> {
             if (!mounted) return;
             setState(() => _progress = 1);
             try {
-              final b = await c.canGoBack();
+              final b = await _c!.canGoBack() as bool;
               if (!mounted) return;
               setState(() => _canBack = b);
-              final f = await c.canGoForward();
+              final f = await _c!.canGoForward() as bool;
               if (!mounted) return;
               setState(() => _canFwd = f);
-              await c.runJavaScript("""
+              await _c!.runJavaScript("""
             var s=document.createElement('style');
             s.innerHTML=`html,body{padding-bottom:90px!important;background:#000!important}
               button,a,input,textarea{min-height:44px!important;border-radius:14px!important}
@@ -62,11 +61,7 @@ class _WebTabState extends State<WebTab> {
     } catch (e) {
       // No platform view (e.g. flutter test) — show fallback instead.
       AppLog.warn('WebView unavailable: $e');
-      if (!kDebugMode) {
-        _webError = e.toString();
-      } else {
-        _webError = e.toString();
-      }
+      _webError = e.toString();
     }
   }
 
