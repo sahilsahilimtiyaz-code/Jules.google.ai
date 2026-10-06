@@ -27,6 +27,26 @@ inputs:
     description: 'The Jules API key to use for authentication'
     required: true
     type: string
+  automation_mode:
+    description: 'AUTO_CREATE_PR or ASK_FOR_APPROVAL'
+    required: false
+    type: string
+    default: 'AUTO_CREATE_PR'
+  require_plan_approval:
+    description: 'Require plan approval before execution'
+    required: false
+    type: boolean
+    default: false
+  max_prompt_chars:
+    description: 'Truncate prompt to this many chars to avoid API limits'
+    required: false
+    type: string
+    default: '12000'
+
+outputs:
+  session_name:
+    description: 'Created Jules session resource name'
+    value: ${{ steps.invoke.outputs.session_name }}
 
 runs:
   using: "composite"
@@ -35,51 +55,89 @@ runs:
       with:
         fetch-depth: 30
 
-    - name: Create initial prompt
+    - name: Build powerful prompt
       env:
         USER_PROMPT: ${{ inputs.prompt }}
       shell: bash
       run: |
+        set -euo pipefail
+        echo "$USER_PROMPT" > prompt_raw.txt
+        # Power wrapper: verification contract + guardrails
+        cat >> prompt_power.txt <<'EOF'
+        You are a senior staff engineer agent.
+        PROTOCOL:
+        1. Map touched area, write 5-9 step plan.
+        2. Minimal diffs (<250 lines), no API breaks, no secrets.
+        3. All tests must pass. Re-run relevant suite before PR.
+        4. PR body: What changed / How verified / Risk / Follow-ups.
+        EOF
+        cat prompt_raw.txt >> prompt_power.txt
+        echo "" >> prompt_power.txt
         echo "$USER_PROMPT" > prompt.txt
+        cat prompt_power.txt >> prompt.txt
 
-    - name: Save last commit content
+    - name: Add last commit context
       if: ${{ inputs.include_last_commit }}
       shell: bash
       run: |
-        echo -e '\n\nContent of the latest commit (in the format of `git show`):' >> prompt.txt
-        echo '```' >> prompt.txt
-        git show   >> prompt.txt
-        echo '```' >> prompt.txt
+        {
+          echo -e '\n\nContent of the latest commit (`git show`):'
+          echo '```'
+          git show --stat
+          git show | head -c 6000
+          echo '```'
+        } >> prompt.txt
 
-    - name: Save git log
+    - name: Add commit log context
       if: ${{ inputs.include_commit_log }}
       shell: bash
       run: |
-        echo -e '\n\nLog of the last 20 commits (in the format of `git log --stat`):' >> prompt.txt
-        echo '```'         >> prompt.txt
-        git log -20 --stat >> prompt.txt
-        echo '```'         >> prompt.txt
+        {
+          echo -e '\n\nLast 20 commits (`git log --stat`):'
+          echo '```'
+          git log -20 --stat | head -c 8000
+          echo '```'
+          echo -e '\n\nChanged files vs base:'
+          git diff --name-only HEAD~5..HEAD 2>/dev/null | head -50 || true
+        } >> prompt.txt
 
-    - name: Assemble Jules payload
+    - name: Assemble payload with validation
       shell: bash
       run: |
-        jq -n --arg jules_prompt "$(cat prompt.txt)" --arg starting_branch "${{ inputs.starting_branch }}" --arg repo_full_name "${{ github.repository }}" '{
-            "prompt": $jules_prompt,
-            "sourceContext": {
-              "source": "sources/github/\($repo_full_name)",
-              "githubRepoContext": {
-                "startingBranch": $starting_branch
-              }
-            },
-            "requirePlanApproval": false,
-            "automationMode": "AUTO_CREATE_PR"
+        set -euo pipefail
+        MAX="${{ inputs.max_prompt_chars }}"
+        # truncate to avoid 400s
+        PROMPT=$(cat prompt.txt | head -c "$MAX")
+        jq -n --arg p "$PROMPT" --arg b "${{ inputs.starting_branch }}" --arg r "${{ github.repository }}" \
+          --argjson plan "${{ inputs.require_plan_approval }}" --arg mode "${{ inputs.automation_mode }}" '{
+            prompt: $p,
+            sourceContext: { source: "sources/github/\($r)", githubRepoContext: { startingBranch: $b } },
+            requirePlanApproval: $plan,
+            automationMode: $mode
           }' > jules_payload.json
+        echo "payload chars: $(wc -c < jules_payload.json)"
+        jq empty jules_payload.json
 
-    - name: Invoke Jules
+    - name: Invoke Jules with retries
+      id: invoke
       shell: bash
+      env:
+        JULES_KEY: ${{ inputs.jules_api_key }}
       run: |
-        curl 'https://jules.googleapis.com/v1alpha/sessions' \
-          -X POST \
-          -H "Content-Type: application/json" \
-          -H "X-Goog-Api-Key: ${{ inputs.jules_api_key }}" \
-          -d @jules_payload.json
+        set -euo pipefail
+        for i in 1 2 3; do
+          echo "Attempt $i..."
+          HTTP=$(curl -s -o resp.json -w "%{http_code}" 'https://jules.googleapis.com/v1alpha/sessions' \
+            -X POST -H "Content-Type: application/json" -H "X-Goog-Api-Key: $JULES_KEY" \
+            -d @jules_payload.json || echo "000")
+          echo "HTTP $HTTP"
+          cat resp.json | head -c 2000; echo
+          if [ "$HTTP" -ge 200 ] && [ "$HTTP" -lt 300 ]; then
+            NAME=$(jq -r '.name // empty' resp.json)
+            echo "session_name=$NAME" >> "$GITHUB_OUTPUT"
+            echo "Created: $NAME"
+            exit 0
+          fi
+          sleep $((2 ** i))
+        done
+        echo "Jules invoke failed after 3 tries"; exit 1
