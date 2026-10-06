@@ -45,9 +45,16 @@ class JulesApi {
 
   final String apiKey;
   final http.Client _client;
+  final bool _ownsClient;
 
   JulesApi(this.apiKey, [http.Client? client])
-      : _client = client ?? http.Client();
+      : _client = client ?? http.Client(),
+        _ownsClient = client == null;
+
+  /// Releases the internal HTTP client if owned (call on app dispose).
+  void close() {
+    if (_ownsClient) _client.close();
+  }
 
   Map<String, String> get _headers => {
         'Content-Type': 'application/json',
@@ -85,7 +92,10 @@ class JulesApi {
           .timeout(AppConstants.httpTimeout)
           .then((res) {
         if (res.statusCode >= 200 && res.statusCode < 300) {
-          return jsonDecode(res.body) as Map<String, dynamic>;
+          final decoded = jsonDecode(res.body);
+          if (decoded is Map<String, dynamic>) return decoded;
+          if (decoded is Map) return Map<String, dynamic>.from(decoded);
+          throw Exception('Jules: unexpected response shape');
         }
         if (res.statusCode >= 500) throw TimeoutException('Jules 5xx');
         throw Exception('Jules ${res.statusCode}: ${res.body}');

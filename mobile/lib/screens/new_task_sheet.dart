@@ -43,7 +43,7 @@ class _NewTaskSheetState extends State<NewTaskSheet> {
   @override
   void initState() {
     super.initState();
-    SecureStore().getRepo().then((v) { if (v != null) _repo.text = v; });
+    SecureStore().getRepo().then((v) { if (!mounted) return; if (v != null) _repo.text = v; });
   }
 
   String get _powerPrompt => buildPowerPrompt(
@@ -68,14 +68,13 @@ class _NewTaskSheetState extends State<NewTaskSheet> {
       setState(() => _msg = 'Task required (max ${AppConstants.maxPromptChars} chars)');
       return;
     }
+    if (!mounted) return;
     setState(() { _busy = true; _msg = null; _success = false; });
     agent.setWorking(true);
     try {
-      final key = await SecureStore().getApiKey();
-      if (key == null || key.isEmpty) throw Exception('Set API key in Settings first');
-      if (_repo.text.isEmpty || _prompt.text.isEmpty) throw Exception('Repo + task required');
+      final key = key0.trim();
       await SecureStore().saveRepo(_repo.text.trim());
-      final res = await JulesApi(key.trim()).createSession(
+      final res = await JulesApi(key).createSession(
         prompt: _powerPrompt,
         repoFullName: _repo.text.trim(),
         startingBranch: _branch.text.trim().isEmpty ? 'main' : _branch.text.trim(),
@@ -83,11 +82,14 @@ class _NewTaskSheetState extends State<NewTaskSheet> {
         automationMode: _mode,
         extraContext: _extra.text,
       );
+      if (!mounted) return;
       setState(() { _success = true; _msg = 'Sent ✓ ${res['name'] ?? ''} — glow ON while coding'; });
     } catch (e) {
       agent.setWorking(false);
+      if (!mounted) return;
       setState(() => _msg = 'Error: $e');
     } finally {
+      if (!mounted) return;
       setState(() => _busy = false);
     }
   }

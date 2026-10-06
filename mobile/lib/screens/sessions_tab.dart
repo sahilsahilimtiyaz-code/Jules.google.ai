@@ -48,8 +48,8 @@ class _SessionsTabState extends State<SessionsTab> {
       st.contains('pending') || st.contains('active') || st.contains('creating') || st.contains('queued');
   }
 
-  List<dynamic> get _visible {
-    final all = _items ?? [];
+  List<Map> get _visible {
+    final all = (_items ?? []).whereType<Map>().toList();
     return all.where((s) {
       final title = (s is Map ? (s['title'] ?? s['name'] ?? '') : '').toString().toLowerCase();
       if (_query.isNotEmpty && !title.contains(_query.toLowerCase())) return false;
@@ -111,7 +111,7 @@ class _SessionsTabState extends State<SessionsTab> {
           if (!_loading && _error == null)
             for (var i = 0; i < vis.length; i++)
               Builder(builder: (_) {
-                final s = vis[i] as Map;
+                final s = vis[i];
                 final title = (s['title'] ?? s['name'] ?? 'Session').toString();
                 final sub = (s['state'] ?? s['status'] ?? '').toString();
                 final working = _isWorking(s);

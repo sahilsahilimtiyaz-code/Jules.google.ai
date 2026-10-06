@@ -25,7 +25,7 @@ class _SettingsTabState extends State<SettingsTab> {
   @override
   void initState() {
     super.initState();
-    SecureStore().getApiKey().then((v) { if (v != null) setState(() => _key.text = v); });
+    SecureStore().getApiKey().then((v) { if (!mounted) return; if (v != null) setState(() => _key.text = v); });
   }
 
   @override

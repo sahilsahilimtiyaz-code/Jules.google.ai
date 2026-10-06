@@ -22,11 +22,16 @@ class _WebTabState extends State<WebTab> {
     _c = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(NavigationDelegate(
-        onProgress: (p) => setState(() => _progress = p / 100),
+        onProgress: (p) { if (mounted) setState(() => _progress = p / 100); },
         onPageFinished: (_) async {
+          if (!mounted) return;
           setState(() => _progress = 1);
-          _c.canGoBack().then((v) => setState(() => _canBack = v));
-          _c.canGoForward().then((v) => setState(() => _canFwd = v));
+          final b = await _c.canGoBack();
+          if (!mounted) return;
+          setState(() => _canBack = b);
+          final f = await _c.canGoForward();
+          if (!mounted) return;
+          setState(() => _canFwd = f);
           await _c.runJavaScript("""
             var s=document.createElement('style');
             s.innerHTML=`html,body{padding-bottom:90px!important;background:#000!important}
@@ -49,6 +54,7 @@ class _WebTabState extends State<WebTab> {
           Row(children: [
             _btn(Icons.arrow_back, _canBack, () async {
               await _c.goBack();
+              if (!mounted) return;
               setState(() {
                 _canBack = false;
               });
