@@ -118,6 +118,12 @@ class _HomeShellState extends State<HomeShell> {
   int _index = 0;
   final _controller = PageController();
 
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   void _go(int i) {
     HapticFeedback.selectionClick();
     setState(() => _index = i);

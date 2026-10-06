@@ -17,6 +17,12 @@ class _SettingsTabState extends State<SettingsTab> {
   bool _saved = false;
 
   @override
+  void dispose() {
+    _key.dispose();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
     SecureStore().getApiKey().then((v) { if (v != null) setState(() => _key.text = v); });

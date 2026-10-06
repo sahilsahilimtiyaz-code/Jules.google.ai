@@ -30,6 +30,15 @@ class _NewTaskSheetState extends State<NewTaskSheet> {
   String? _msg;
 
   @override
+  void dispose() {
+    _repo.dispose();
+    _branch.dispose();
+    _prompt.dispose();
+    _extra.dispose();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
     SecureStore().getRepo().then((v) { if (v != null) _repo.text = v; });

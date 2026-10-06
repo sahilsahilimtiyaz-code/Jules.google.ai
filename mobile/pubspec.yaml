@@ -1,7 +1,7 @@
 name: jules
-description: Jules mobile - stylish phone client for jules.google.com + native API
+description: Jules mobile - stylish phone client for Jules with power prompts + native API
 publish_to: 'none'
-version: 0.1.0+1
+version: 0.2.0+2
 
 environment:
   sdk: '>=3.2.0 <4.0.0'
