@@ -200,18 +200,23 @@ class _HomeShellState extends State<HomeShell> {
       borderRadius: BorderRadius.circular(16),
       child: AnimatedContainer(
         duration: 300.ms,
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 12),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           color: active ? AppTheme.accent.withValues(alpha: 0.18) : Colors.transparent,
         ),
         child: Column(mainAxisSize: MainAxisSize.min, children: [
-          Icon(icon, color: active ? activeC : inactive, size: 22),
-          Text(label, style: TextStyle(fontSize: 11, color: active ? activeC : inactive)),
+          Icon(icon, color: active ? activeC : inactive, size: 20),
+          Text(label,
+              maxLines: 1,
+              style: TextStyle(
+                  fontSize: 10,
+                  height: 1.2,
+                  color: active ? activeC : inactive)),
           AnimatedContainer(
-            duration: 300.ms, margin: const EdgeInsets.only(top: 3),
-            height: 3, width: active ? 18 : 0,
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(3), gradient: AppTheme.gradient),
+            duration: 300.ms, margin: const EdgeInsets.only(top: 2),
+            height: 2, width: active ? 18 : 0,
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(2), gradient: AppTheme.gradient),
           ),
         ]),
       ),
