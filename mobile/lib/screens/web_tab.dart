@@ -38,10 +38,10 @@ class _WebTabState extends State<WebTab> {
             if (!mounted) return;
             setState(() => _progress = 1);
             try {
-              final b = await _c!.canGoBack() as bool;
+              final b = await _c!.canGoBack();
               if (!mounted) return;
               setState(() => _canBack = b);
-              final f = await _c!.canGoForward() as bool;
+              final f = await _c!.canGoForward();
               if (!mounted) return;
               setState(() => _canFwd = f);
               await _c!.runJavaScript("""
