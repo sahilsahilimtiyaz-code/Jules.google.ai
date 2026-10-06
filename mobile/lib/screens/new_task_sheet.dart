@@ -89,8 +89,7 @@ class _NewTaskSheetState extends State<NewTaskSheet> {
       if (!mounted) return;
       setState(() => _msg = 'Error: $e');
     } finally {
-      if (!mounted) return;
-      setState(() => _busy = false);
+      if (mounted) setState(() => _busy = false);
     }
   }
 

@@ -4,6 +4,11 @@ import '../src/core/tokens.dart';
 /// Material 3 themes. Dark = AMOLED; light = lavender paper.
 /// All brand values come from [AppColors] — no hex elsewhere.
 class AppTheme {
+  /// Back-compat brand shortcuts (prefer [AppColors] in new code).
+  static const Color accent = AppColors.primary;
+  static const Color accent2 = AppColors.secondary;
+  static const Color accent3 = AppColors.tertiary;
+
   static ThemeData dark() {
     return ThemeData(
       useMaterial3: true,

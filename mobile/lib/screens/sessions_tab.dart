@@ -42,7 +42,7 @@ class _SessionsTabState extends State<SessionsTab> {
     }
   }
 
-  bool _isWorking(Map m) {
+  bool _isWorking(Map<dynamic, dynamic> m) {
     final st = (m['state'] ?? m['status'] ?? '').toString().toLowerCase();
     return st.contains('run') || st.contains('work') || st.contains('progress') ||
       st.contains('pending') || st.contains('active') || st.contains('creating') || st.contains('queued');
@@ -50,11 +50,11 @@ class _SessionsTabState extends State<SessionsTab> {
 
   List<Map> get _visible {
     final all = (_items ?? []).whereType<Map>().toList();
-    return all.where((s) {
-      final title = (s is Map ? (s['title'] ?? s['name'] ?? '') : '').toString().toLowerCase();
+    return all.where((Map s) {
+      final title = (s['title'] ?? s['name'] ?? '').toString().toLowerCase();
       if (_query.isNotEmpty && !title.contains(_query.toLowerCase())) return false;
-      if (_filter == 'working' && !(s is Map && _isWorking(s))) return false;
-      if (_filter == 'done' && (s is Map && _isWorking(s))) return false;
+      if (_filter == 'working' && !_isWorking(s)) return false;
+      if (_filter == 'done' && _isWorking(s)) return false;
       return true;
     }).toList();
   }
