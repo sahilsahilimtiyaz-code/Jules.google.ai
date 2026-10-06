@@ -73,7 +73,7 @@ class _SplashGateState extends State<SplashGate> {
               width: 110, height: 110,
               decoration: BoxDecoration(
                 shape: BoxShape.circle, gradient: AppTheme.gradient,
-                boxShadow: [BoxShadow(color: AppTheme.accent.withOpacity(0.6), blurRadius: 60, spreadRadius: 10)],
+                boxShadow: [BoxShadow(color: AppTheme.accent.withValues(alpha: 0.6), blurRadius: 60, spreadRadius: 10)],
               ),
               child: const Icon(Icons.auto_awesome, size: 54, color: Colors.white),
             )
@@ -153,7 +153,7 @@ class _HomeShellState extends State<HomeShell> {
           width: 62, height: 62,
           decoration: BoxDecoration(
             shape: BoxShape.circle, gradient: AppTheme.gradient,
-            boxShadow: [BoxShadow(color: AppTheme.accent.withOpacity(0.5), blurRadius: 24)],
+            boxShadow: [BoxShadow(color: AppTheme.accent.withValues(alpha: 0.5), blurRadius: 24)],
           ),
           child: const Icon(Icons.add, size: 30, color: Colors.white),
         ).animate(onPlay: (c) => c.repeat(reverse: true))
@@ -163,9 +163,9 @@ class _HomeShellState extends State<HomeShell> {
       bottomNavigationBar: Container(
         margin: const EdgeInsets.fromLTRB(14, 0, 14, 14),
         decoration: BoxDecoration(
-          color: (dark ? Colors.black : Colors.white).withOpacity(0.85),
+          color: (dark ? Colors.black : Colors.white).withValues(alpha: 0.85),
           borderRadius: BorderRadius.circular(28),
-          border: Border.all(color: AppTheme.accent.withOpacity(0.35)),
+          border: Border.all(color: AppTheme.accent.withValues(alpha: 0.35)),
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(28),
@@ -197,7 +197,7 @@ class _HomeShellState extends State<HomeShell> {
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          color: active ? AppTheme.accent.withOpacity(0.18) : Colors.transparent,
+          color: active ? AppTheme.accent.withValues(alpha: 0.18) : Colors.transparent,
         ),
         child: Column(mainAxisSize: MainAxisSize.min, children: [
           Icon(icon, color: active ? activeC : inactive, size: 22),
@@ -235,7 +235,7 @@ class ActivityTab extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
-                color: working ? Colors.green.withOpacity(0.15) : Colors.white10,
+                color: working ? Colors.green.withValues(alpha: 0.15) : Colors.white10,
                 border: Border.all(color: working ? Colors.greenAccent : Colors.white24),
               ),
               child: Row(mainAxisSize: MainAxisSize.min, children: [

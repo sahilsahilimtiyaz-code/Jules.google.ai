@@ -63,7 +63,7 @@ class SessionDetail extends StatelessWidget {
           Expanded(child: OutlinedButton.icon(
             icon: const Icon(Icons.share, size: 18),
             label: const Text('Share'),
-            onPressed: () => Share.share('$title\n$state\n$pr\n${session.toString().substring(0, session.toString().length.clamp(0, 500))}'),
+            onPressed: () => Share.share('$title\n$state\n$pr'),
           )),
         ]).animate().fadeIn(delay: 200.ms).slideY(begin: 0.15, end: 0),
         const SizedBox(height: 12),
@@ -71,7 +71,7 @@ class SessionDetail extends StatelessWidget {
         const SizedBox(height: 6),
         Container(
           padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(color: Colors.white.withOpacity(0.04),
+          decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.04),
             borderRadius: BorderRadius.circular(14), border: Border.all(color: Colors.white10)),
           child: Text(session.toString(), style: const TextStyle(fontSize: 11, color: Colors.white60)),
         ),
@@ -83,7 +83,7 @@ class SessionDetail extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(20),
-        color: working ? Colors.green.withOpacity(0.15) : Colors.white10,
+        color: working ? Colors.green.withValues(alpha: 0.15) : Colors.white10,
         border: Border.all(color: working ? Colors.greenAccent : Colors.white24)),
       child: Text(t, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold,
         color: working ? Colors.greenAccent : Colors.white70)),

@@ -70,8 +70,8 @@ class _ConicalGlowBorderState extends State<ConicalGlowBorder>
         padding: EdgeInsets.all(widget.borderWidth),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(widget.radius),
-          border: Border.all(color: Colors.white.withOpacity(0.10)),
-          color: Colors.white.withOpacity(0.03),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.10)),
+          color: Colors.white.withValues(alpha: 0.03),
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(widget.radius - 2),
@@ -96,12 +96,12 @@ class _ConicalGlowBorderState extends State<ConicalGlowBorder>
             ),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF715CD7).withOpacity(0.55),
+                color: const Color(0xFF715CD7).withValues(alpha: 0.55),
                 blurRadius: 22,
                 spreadRadius: 1,
               ),
               BoxShadow(
-                color: const Color(0xFF3B82F6).withOpacity(0.35),
+                color: const Color(0xFF3B82F6).withValues(alpha: 0.35),
                 blurRadius: 44,
                 spreadRadius: 2,
               ),

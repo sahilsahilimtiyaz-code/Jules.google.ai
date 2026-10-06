@@ -75,7 +75,7 @@ class _NewTaskSheetState extends State<NewTaskSheet> {
       decoration: BoxDecoration(
         color: const Color(0xFF0A0A0A),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-        border: Border.all(color: const Color(0xFF715CD7).withOpacity(0.4)),
+        border: Border.all(color: const Color(0xFF715CD7).withValues(alpha: 0.4)),
       ),
       padding: EdgeInsets.fromLTRB(20, 16, 20, MediaQuery.of(context).viewInsets.bottom + 20),
       child: SingleChildScrollView(
@@ -115,7 +115,7 @@ class _NewTaskSheetState extends State<NewTaskSheet> {
                 const SizedBox(width: 10),
                 Expanded(
                   child: DropdownButtonFormField<String>(
-                    value: _mode, decoration: const InputDecoration(labelText: 'Mode'),
+                    initialValue: _mode, decoration: const InputDecoration(labelText: 'Mode'),
                     items: const [
                       DropdownMenuItem(value: 'AUTO_CREATE_PR', child: Text('Auto PR')),
                       DropdownMenuItem(value: 'ASK_FOR_APPROVAL', child: Text('Ask approval')),
@@ -152,7 +152,7 @@ class _NewTaskSheetState extends State<NewTaskSheet> {
               if (_preview)
                 Container(
                   width: double.infinity, padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(color: Colors.white.withOpacity(0.05),
+                  decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(14), border: Border.all(color: Colors.white10)),
                   child: Text(_powerPrompt, style: const TextStyle(fontSize: 12, color: Colors.white70)),
                 ).animate().fadeIn().slideY(begin: 0.1, end: 0),

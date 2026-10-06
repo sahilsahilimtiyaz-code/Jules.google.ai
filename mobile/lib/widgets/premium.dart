@@ -20,13 +20,13 @@ class _AuroraBgState extends State<AuroraBg> {
         // glowing orbs with slow loop
         Positioned(
           top: -80, left: -60,
-          child: _orb(220, AppTheme.accent.withOpacity(0.35)),
+          child: _orb(220, AppTheme.accent.withValues(alpha: 0.35)),
         ).animate(onPlay: (c) => c.repeat(reverse: true))
          .move(begin: const Offset(0, 0), end: const Offset(30, 40), duration: 6.seconds)
          .then().move(begin: const Offset(30, 40), end: const Offset(0, 0), duration: 6.seconds),
         Positioned(
           bottom: 100, right: -70,
-          child: _orb(260, AppTheme.accent2.withOpacity(0.28)),
+          child: _orb(260, AppTheme.accent2.withValues(alpha: 0.28)),
         ).animate(onPlay: (c) => c.repeat(reverse: true))
          .move(begin: const Offset(0, 0), end: const Offset(-30, -50), duration: 7.seconds)
          .then().move(begin: const Offset(-30, -50), end: const Offset(0, 0), duration: 7.seconds),
@@ -59,10 +59,10 @@ class GlassCard extends StatelessWidget {
     return Container(
       padding: padding,
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.06),
+        color: Colors.white.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: Colors.white.withOpacity(0.09)),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.4), blurRadius: 20)],
+        border: Border.all(color: Colors.white.withValues(alpha: 0.09)),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.4), blurRadius: 20)],
       ),
       child: child,
     );

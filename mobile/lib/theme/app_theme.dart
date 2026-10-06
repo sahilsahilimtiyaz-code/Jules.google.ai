@@ -13,20 +13,20 @@ class AppTheme {
       scaffoldBackgroundColor: bg,
       colorScheme: const ColorScheme.dark(
         primary: accent, secondary: accent2, tertiary: accent3,
-        background: bg, surface: Color(0xFF0A0A0A),
+        surface: bg, surface: Color(0xFF0A0A0A),
       ),
       appBarTheme: const AppBarTheme(backgroundColor: Colors.transparent, elevation: 0),
       cardTheme: CardThemeData(
-        color: Colors.white.withOpacity(0.06),
+        color: Colors.white.withValues(alpha: 0.06),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
         elevation: 0,
       ),
       chipTheme: ChipThemeData(
-        selectedColor: accent.withOpacity(0.25),
+        selectedColor: accent.withValues(alpha: 0.25),
         labelStyle: const TextStyle(color: Colors.white),
       ),
       inputDecorationTheme: InputDecorationTheme(
-        filled: true, fillColor: Colors.white.withOpacity(0.07),
+        filled: true, fillColor: Colors.white.withValues(alpha: 0.07),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(18), borderSide: BorderSide.none),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
@@ -48,7 +48,7 @@ class AppTheme {
       scaffoldBackgroundColor: const Color(0xFFF6F4FF),
       colorScheme: const ColorScheme.light(
         primary: accent, secondary: accent2, tertiary: accent3,
-        background: Color(0xFFF6F4FF), surface: Colors.white,
+        surface: Color(0xFFF6F4FF), surface: Colors.white,
       ),
       appBarTheme: const AppBarTheme(backgroundColor: Colors.transparent, elevation: 0,
         foregroundColor: Colors.black87),

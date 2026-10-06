@@ -54,7 +54,7 @@ class _WebTabState extends State<WebTab> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(24),
                 border: Border.all(color: Colors.white10),
-                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.5), blurRadius: 24)],
+                boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.5), blurRadius: 24)],
               ),
               clipBehavior: Clip.antiAlias,
               child: WebViewWidget(controller: _c),
